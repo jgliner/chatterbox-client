@@ -1,5 +1,7 @@
 // YOUR CODE HERE:
 $(document).ready(function(){
+
+  var holder = {};
   
   var sanitizer = function (str) {
     return str.replace('&', '&#38')
@@ -10,27 +12,38 @@ $(document).ready(function(){
       .replace("/", '&#92');
   };
 
-  var message = {
-    username: 'shawndrost',
-    text: 'trololo',
-    roomname: '4chan'
+  var display = function(incoming, username, msg) {
+    if (incoming === currentRoom || !currentRoom) {
+      $('#chats').append(`<p><b>${username}</b>: ${msg}</p>`);
+    }
   };
 
-  $.ajax({
-    // This is the url you should use to communicate with the parse API server.
-    url: 'https://api.parse.com/1/classes/chatterbox',
-    type: 'POST',
-    data: JSON.stringify(message),
-    contentType: 'application/json',
-    success: function (data) {
-      console.log('chatterbox: Message sent');
-    },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('chatterbox: Failed to send message');
-    }
-  });
+  // POST METHODS
 
+  // var message = {
+  //   username: 'shawndrost',
+  //   text: 'trololo',
+  //   roomname: '4chan'
+  // };
+
+  // $.ajax({
+  //   // This is the url you should use to communicate with the parse API server.
+  //   url: 'https://api.parse.com/1/classes/chatterbox',
+  //   type: 'POST',
+  //   data: JSON.stringify(message),
+  //   contentType: 'application/json',
+  //   success: function (data) {
+  //     console.log('chatterbox: Message sent');
+  //   },
+  //   error: function (data) {
+  //     // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+  //     console.error('chatterbox: Failed to send message');
+  //   }
+  // });
+
+  // GET METHODS
+  var currentRoom = 'lobby';
+  
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: 'https://api.parse.com/1/classes/chatterbox',
@@ -38,13 +51,16 @@ $(document).ready(function(){
     contentType: 'application/json',
     success: function (data) {
       for(let i=0; i<data.results.length; i++) {
-        // console.log(data.results[i].text);
         let msg = data.results[i].text || '';
-        let userName = data.results[i].username || 'Anon';
+        let username = data.results[i].username || 'Anon';
+        let roomname = data.results[i].roomname || '';
         msg = sanitizer(msg);
-        userName = sanitizer(userName);
-        $('#chats').append(`<p><b>${userName}</b>: ${msg}</p>`);
+        username = sanitizer(username);
+        roomname = sanitizer(roomname);
+        Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
+        display(roomname, username, msg);
       }
+      console.log(holder)
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
