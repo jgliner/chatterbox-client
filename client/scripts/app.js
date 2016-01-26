@@ -30,7 +30,6 @@ $(document).ready(function(){
     $('select').empty();
     $('.rooms').append(`<option>Choose a room</option>`);
     for (var i = 0; i < rooms.length; i++) {
-      console.log(rooms[i])
       if (rooms[i] !== '' && !rooms[i].match(/(\&\#.{0,4}\;script)[\s\S]+|(\<script\>)[\s\S]+/igm)) {
         $('.rooms').append(`<option value="${rooms[i]}">${rooms[i]}</option>`);
       }
@@ -61,7 +60,9 @@ $(document).ready(function(){
           }
         }
         console.log(data)
-        makeRoomList(Object.keys(holder).sort());
+        makeRoomList(Object.keys(holder).sort(function(a, b) {
+          return a.toLowerCase().localeCompare(b.toLowerCase());
+        }));
         display(currentRoom);
       },
       error: function (data) {
@@ -87,24 +88,41 @@ $(document).ready(function(){
 
   // POST METHODS
   var message = {
-    username: 'hr38',
-    text: 'yet another message!!!',
-    roomname: '4chan'
+    username: 'Anonymous',
+    // text: 'yet another message!!!',
+    roomname: 'lobby'
   };
 
-  $.ajax({
-    // This is the url you should use to communicate with the parse API server.
-    url: 'https://api.parse.com/1/classes/chatterbox',
-    type: 'POST',
-    data: JSON.stringify(message),
-    contentType: 'application/json',
-    success: function (data) {
-      console.log('chatterbox: Message sent');
-    },
-    error: function (data) {
-      // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('chatterbox: Failed to send message');
-    }
+  $('.newRoom').submit(function(e) {
+    e.preventDefault();
+    message.roomname = $(this).children('input').val();
+    $(this).trigger('reset');
+  });
+
+  $('.setUsername').submit(function(e) {
+    e.preventDefault();
+    message.username = $(this).children('input').val();
+    $(this).trigger('reset');
+  });
+
+  $('.post').submit(function(e) {
+    e.preventDefault();
+    message.text = $(this).children('input').val();
+    $.ajax({
+      // This is the url you should use to communicate with the parse API server.
+      url: 'https://api.parse.com/1/classes/chatterbox',
+      type: 'POST',
+      data: JSON.stringify(message),
+      contentType: 'application/json',
+      success: function (data) {
+        console.log('chatterbox: Message sent:', data);
+      },
+      error: function (data) {
+        // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+        console.error('chatterbox: Failed to send message');
+      }
+    });
+    $(this).trigger('reset');
   });
 
   
