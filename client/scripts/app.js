@@ -34,7 +34,7 @@ $(document).ready(function(){
 
   var makeRoomList = function(rooms) {
     $('select').empty();
-    $('.rooms').append(`<option>Choose a room</option>`);
+    $('.rooms').append(`<option>Display a room</option>`);
     for (var i = 0; i < rooms.length; i++) {
       if (rooms[i] !== '' && !rooms[i].match(/(\&\#.{0,4}\;script)[\s\S]+|(\<script\>)[\s\S]+/igm)) {
         $('.rooms').append(`<option value="${rooms[i]}">${rooms[i]}</option>`);
@@ -95,7 +95,9 @@ $(document).ready(function(){
   $('select').on('change', function(e) {
     e.preventDefault();
     currentRoom = $(this).val();
-    $("#currentRoom").text(currentRoom);
+    $("#currentRoom").text(`Posting In: ${currentRoom}`);
+    $('#currentUsername').text(`As: ${message.username}`);
+    message.roomname = $(this).val();
     display($(this).val());
   });
 
@@ -103,19 +105,21 @@ $(document).ready(function(){
   // POST METHODS
   var message = {
     username: 'Anonymous',
-    text: 'yet another message!!!',
+    text: '',
     roomname: 'lobby'
   };
 
   $('.newRoom').submit(function(e) {
     e.preventDefault();
+    $('#chats').empty();
+    $("#currentRoom").text(`Posting In: ${$(this).children('input').val()}`);
     message.roomname = $(this).children('input').val();
-    $(this).trigger('reset');
   });
 
   $('.setUsername').submit(function(e) {
     e.preventDefault();
     message.username = $(this).children('input').val();
+    $('#currentUsername').text(`As: ${message.username}`);
     $(this).trigger('reset');
   });
 
@@ -136,13 +140,9 @@ $(document).ready(function(){
         console.error('chatterbox: Failed to send message');
       }
     });
+    $('#chats').prepend(`<p><a class="user" href="#">${message.username}</a>: ${message.text}</p>`);
     $(this).trigger('reset');
   });
-
-
-
-  
-
 });
 
 
