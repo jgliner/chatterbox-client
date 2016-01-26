@@ -4,6 +4,8 @@ $(document).ready(function(){
   var holder = {};
   // format: [username, msg]
 
+  var lastId;
+
   var friends = [];
 
   var currentRoom = 'Unspecified';
@@ -20,7 +22,6 @@ $(document).ready(function(){
   var display = function(incoming) {
     var friend;
     console.log('DISP', incoming, holder);
-    $('#chats').empty();
     incoming = sanitizer(incoming);
     if (currentRoom !== 'Unspecified') {
       console.log(friends)
@@ -52,9 +53,7 @@ $(document).ready(function(){
       data: {'order': '-updatedAt', 'limit': 1000},
       success: function (data) {
         holder = {};
-
         for(var i=0; i<data.results.length; i++) {
-          // add post time
           var msg = data.results[i].text || ' ';
           var username = data.results[i].username || 'Anon';
           var roomname = data.results[i].roomname || 'Unspecified';
@@ -65,7 +64,8 @@ $(document).ready(function(){
             Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
           }
         }
-        console.log(data)
+        lastId = data.results[data.results.length-1];
+        console.log(data, 'LAST MSG', lastId);
         makeRoomList(Object.keys(holder).sort(function(a, b) {
           return a.toLowerCase().localeCompare(b.toLowerCase());
         }));
@@ -111,9 +111,12 @@ $(document).ready(function(){
 
   $('.newRoom').submit(function(e) {
     e.preventDefault();
+    var newRoom = $(this).children('input').val();
     $('#chats').empty();
-    $("#currentRoom").text(`Posting In: ${$(this).children('input').val()}`);
-    message.roomname = $(this).children('input').val();
+    $("#currentRoom").text(`Posting In: ${newRoom}`);
+    message.roomname = newRoom;
+    currentRoom = newRoom;
+    display(newRoom);
   });
 
   $('.setUsername').submit(function(e) {
