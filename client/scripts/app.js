@@ -25,8 +25,9 @@ $(document).ready(function(){
     if (currentRoom !== 'Unspecified') {
       console.log(friends)
       for (var i = 0; i < holder[incoming].length; i++) {
-        friend = friends.indexOf(holder[incoming][i][0]) > -1 ? ' friend' : '';
-        $('#chats').append(`<p class="${holder[incoming][i][0]}${friend}"><a class="user" href="#">${holder[incoming][i][0]}</a>: ${holder[incoming][i][1]}</p>`);
+        var shortName = holder[incoming][i][0].replace(/\s/igm, '');
+        friend = friends.indexOf(shortName) > -1 ? ' friend' : '';
+        $('#chats').append(`<p class="${shortName}${friend}"><a class="user" href="#">${holder[incoming][i][0]}</a>: ${holder[incoming][i][1]}</p>`);
       }
     }
   };
@@ -86,6 +87,7 @@ $(document).ready(function(){
   $('#chats').on('click', '.user', function(e) {
     e.preventDefault();
     var un = $(this).text();
+    un = un.replace(/\s/igm, '');
     $(`.${un}`).addClass('friend');
     friends.push(un);
   })
@@ -101,7 +103,7 @@ $(document).ready(function(){
   // POST METHODS
   var message = {
     username: 'Anonymous',
-    // text: 'yet another message!!!',
+    text: 'yet another message!!!',
     roomname: 'lobby'
   };
 
@@ -127,7 +129,7 @@ $(document).ready(function(){
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
-        console.log('chatterbox: Message sent:', data);
+        console.log('chatterbox: Message sent:', JSON.stringify(message));
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
