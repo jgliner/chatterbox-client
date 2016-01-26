@@ -95,6 +95,7 @@ $(document).ready(function(){
   $('select').on('change', function(e) {
     e.preventDefault();
     currentRoom = $(this).val();
+    $('#chats').empty();
     $("#currentRoom").text(`Posting In: ${currentRoom}`);
     $('#currentUsername').text(`As: ${message.username}`);
     message.roomname = $(this).val();
@@ -117,6 +118,7 @@ $(document).ready(function(){
     message.roomname = newRoom;
     currentRoom = newRoom;
     display(newRoom);
+    $(this).trigger('reset');
   });
 
   $('.setUsername').submit(function(e) {
