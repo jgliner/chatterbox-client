@@ -91,3 +91,7 @@ form input[type=text] {
 input {
     float: left;
 }
+
+.friend {
+    font-weight: 800;
+}

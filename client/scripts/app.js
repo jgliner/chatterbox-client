@@ -4,6 +4,8 @@ $(document).ready(function(){
   var holder = {};
   // format: [username, msg]
 
+  var friends = [];
+
   var currentRoom = 'Unspecified';
   
   var sanitizer = function (str) {
@@ -16,12 +18,15 @@ $(document).ready(function(){
   };
 
   var display = function(incoming) {
+    var friend;
     console.log('DISP', incoming, holder);
     $('#chats').empty();
     incoming = sanitizer(incoming);
     if (currentRoom !== 'Unspecified') {
+      console.log(friends)
       for (var i = 0; i < holder[incoming].length; i++) {
-        $('#chats').append(`<p><b>${holder[incoming][i][0]}</b>: ${holder[incoming][i][1]}</p>`);
+        friend = friends.indexOf(holder[incoming][i][0]) > -1 ? ' friend' : '';
+        $('#chats').append(`<p class="${holder[incoming][i][0]}${friend}"><a class="user" href="#">${holder[incoming][i][0]}</a>: ${holder[incoming][i][1]}</p>`);
       }
     }
   };
@@ -78,6 +83,13 @@ $(document).ready(function(){
     init();
   }, 10000);
 
+  $('#chats').on('click', '.user', function(e) {
+    e.preventDefault();
+    var un = $(this).text();
+    $(`.${un}`).addClass('friend');
+    friends.push(un);
+  })
+
   $('select').on('change', function(e) {
     e.preventDefault();
     currentRoom = $(this).val();
@@ -124,6 +136,8 @@ $(document).ready(function(){
     });
     $(this).trigger('reset');
   });
+
+
 
   
 
