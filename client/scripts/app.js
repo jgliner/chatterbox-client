@@ -7,27 +7,31 @@ $(document).ready(function(){
   var currentRoom = 'Unspecified';
   
   var sanitizer = function (str) {
-    return str.replace(/\&/, '&#38')
-      .replace(/\</, '&#60')
-      .replace(/\>/, '&#61')
-      .replace(/\"/, '&#34')
-      .replace(/\'/, '&#39')
-      .replace(/\//, '&#92');
+    return str.replace(/\&/g, '&#38')
+      .replace(/\</g, '&#60')
+      .replace(/\>/g, '&#61')
+      .replace(/\"/g, '&#34')
+      .replace(/\'/g, '&#39')
+      .replace(/\//g, '&#92');
   };
 
   var display = function(incoming) {
     console.log('DISP', incoming, holder);
+    $('#chats').empty();
     incoming = sanitizer(incoming);
-    for (var i = 0; i < holder[incoming].length; i++) {
-      $('#chats').append(`<p><b>${holder[incoming][i][0]}</b>: ${holder[incoming][i][1]}</p>`);
-    } 
+    if (currentRoom !== 'Unspecified') {
+      for (var i = 0; i < holder[incoming].length; i++) {
+        $('#chats').append(`<p><b>${holder[incoming][i][0]}</b>: ${holder[incoming][i][1]}</p>`);
+      }
+    }
   };
 
   var makeRoomList = function(rooms) {
     $('select').empty();
     $('.rooms').append(`<option>Choose a room</option>`);
     for (var i = 0; i < rooms.length; i++) {
-      if (rooms[i] !== '') {
+      console.log(rooms[i])
+      if (rooms[i] !== '' && !rooms[i].match(/(\&\#.{0,4}\;script)[\s\S]+|(\<script\>)[\s\S]+/igm)) {
         $('.rooms').append(`<option value="${rooms[i]}">${rooms[i]}</option>`);
       }
     }
@@ -52,7 +56,9 @@ $(document).ready(function(){
           msg = sanitizer(msg);
           username = sanitizer(username);
           roomname = sanitizer(roomname);
-          Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
+          if (roomname !== 'Unspecified') {
+            Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
+          }
         }
         console.log(data)
         makeRoomList(Object.keys(holder).sort());
@@ -74,7 +80,7 @@ $(document).ready(function(){
   $('select').on('change', function(e) {
     e.preventDefault();
     currentRoom = $(this).val();
-    document.getElementById("currentRoom").innerHTML = currentRoom;
+    $("#currentRoom").text(currentRoom);
     display($(this).val());
   });
 
