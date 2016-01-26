@@ -2,6 +2,9 @@
 $(document).ready(function(){
 
   var holder = {};
+  // format: [username, msg]
+
+  var currentRoom = '';
   
   var sanitizer = function (str) {
     return str.replace('&', '&#38')
@@ -12,9 +15,11 @@ $(document).ready(function(){
       .replace("/", '&#92');
   };
 
-  var display = function(incoming, username, msg) {
-    if (incoming === currentRoom || !currentRoom) {
-      $('#chats').append(`<p><b>${username}</b>: ${msg}</p>`);
+  var display = function(incoming) {
+    console.log(incoming, holder)
+    $('#chats').empty();
+    for (var i = 0; i < holder[incoming].length; i++) {
+      $('#chats').append(`<p><b>${holder[incoming][i][0]}</b>: ${holder[incoming][i][1]}</p>`);
     }
   };
 
@@ -22,6 +27,9 @@ $(document).ready(function(){
     for (var i = 0; i < rooms.length; i++) {
       if (rooms[i] !== '') {
         $('.rooms').append(`<option value="${rooms[i]}">${rooms[i]}</option>`);
+      }
+      else {
+        $('.rooms').append(`<option value="default">Select a Room...</option>`);
       }
     }
   }
@@ -50,7 +58,6 @@ $(document).ready(function(){
   // });
 
   // GET METHODS
-  var currentRoom = 'lobby';
 
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -66,7 +73,6 @@ $(document).ready(function(){
         username = sanitizer(username);
         roomname = sanitizer(roomname);
         Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
-        display(roomname, username, msg);
       }
       makeRoomList(Object.keys(holder).sort());
     },
@@ -75,5 +81,11 @@ $(document).ready(function(){
       console.error('chatterbox: Failed to send message');
     }
   });
+
+  $('select').on('change', function(e) {
+    e.preventDefault();
+    display($(this).val());
+  });
+
 });
 
