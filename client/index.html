@@ -17,16 +17,18 @@
   </head>
   <body>
     <div id="main">
-      <h1>chatterbox</h1><br><br>
+      <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
-      <span>Room: </span>
-      <select class="rooms">
+      <h2 id="currentRoom">Welcome!</h2><br>
+      <span>Room: </span><select class="rooms"></select><br><br>
 
-      </select><br><br>
       <input type="text" class="set-new-room"></input>
-      <span>
         <button class='submit-new-room'>Create New Room</button>
-      </span>
+      <input type="text" class="set-username"></input>
+        <button class='submit-username'>Set Username</button>
+      <input type="text" class="post-text"></input>
+        <button class='submit-post'>Post!</button>  
+
     </div>
     <div id="chats"></div>
   </body>
