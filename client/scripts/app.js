@@ -18,6 +18,14 @@ $(document).ready(function(){
     }
   };
 
+  var makeRoomList = function(rooms) {
+    for (var i = 0; i < rooms.length; i++) {
+      if (rooms[i] !== '') {
+        $('.rooms').append(`<option value="${rooms[i]}">${rooms[i]}</option>`);
+      }
+    }
+  }
+
   // POST METHODS
 
   // var message = {
@@ -43,7 +51,7 @@ $(document).ready(function(){
 
   // GET METHODS
   var currentRoom = 'lobby';
-  
+
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: 'https://api.parse.com/1/classes/chatterbox',
@@ -60,13 +68,12 @@ $(document).ready(function(){
         Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
         display(roomname, username, msg);
       }
-      console.log(holder)
+      makeRoomList(Object.keys(holder).sort());
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to send message');
     }
   });
-
 });
 
