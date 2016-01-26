@@ -37,8 +37,8 @@ $(document).ready(function(){
   // POST METHODS
 
   // var message = {
-  //   username: 'shawndrost',
-  //   text: 'trololo',
+  //   username: 'hr38',
+  //   text: 'extra nice',
   //   roomname: '4chan'
   // };
 
@@ -64,8 +64,10 @@ $(document).ready(function(){
     url: 'https://api.parse.com/1/classes/chatterbox',
     type: 'GET',
     contentType: 'application/json',
+    data: {'order': '-updatedAt'},
     success: function (data) {
       for(let i=0; i<data.results.length; i++) {
+        // add post time
         let msg = data.results[i].text || '';
         let username = data.results[i].username || 'Anon';
         let roomname = data.results[i].roomname || '';
@@ -74,6 +76,7 @@ $(document).ready(function(){
         roomname = sanitizer(roomname);
         Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
       }
+      console.log(data)
       makeRoomList(Object.keys(holder).sort());
     },
     error: function (data) {
