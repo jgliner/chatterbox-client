@@ -8,6 +8,8 @@ $(document).ready(function(){
 
   var friends = [];
 
+  var blocked = [];
+
   var currentRoom = 'Unspecified';
   
   var sanitizer = function (str) {
@@ -60,7 +62,7 @@ $(document).ready(function(){
           msg = sanitizer(msg);
           username = sanitizer(username);
           roomname = sanitizer(roomname);
-          if (roomname !== 'Unspecified') {
+          if (roomname !== 'Unspecified' && blocked.indexOf(username) === -1) {
             Array.isArray(holder[roomname]) ? holder[roomname].push([username, msg]) : holder[roomname] = [[username, msg]];
           }
         }
@@ -125,6 +127,12 @@ $(document).ready(function(){
     e.preventDefault();
     message.username = $(this).children('input').val();
     $('#currentUsername').text(`As: ${message.username}`);
+    $(this).trigger('reset');
+  });
+
+  $('.blockUser').submit(function(e) {
+    e.preventDefault();
+    blocked.push($(this).children('input').val());
     $(this).trigger('reset');
   });
 
