@@ -39,7 +39,7 @@ $(document).ready(function(){
     $('select').empty();
     $('.rooms').append(`<option>Display a room</option>`);
     for (var i = 0; i < rooms.length; i++) {
-      if (rooms[i] !== '' && !rooms[i].match(/(\&\#.{0,4}\;script)[\s\S]+|(\<script\>)[\s\S]+/igm)) {
+      if (rooms[i] !== '' && !rooms[i].match(/(\&\#.{0,4}\;script)[\s\S]+|(\<script\>)[\s\S]+|^&|(#\d+)+|(amp;)+/igm)) {
         $('.rooms').append(`<option value="${rooms[i]}">${rooms[i]}</option>`);
       }
     }
@@ -67,7 +67,7 @@ $(document).ready(function(){
           }
         }
         lastId = data.results[data.results.length-1];
-        console.log(data, 'LAST MSG', lastId);
+        console.log(data, 'LAST MSG', lastId, 'HOLDER', Object.keys(holder));
         makeRoomList(Object.keys(holder).sort(function(a, b) {
           return a.toLowerCase().localeCompare(b.toLowerCase());
         }));
